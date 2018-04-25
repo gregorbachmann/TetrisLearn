@@ -32,14 +32,19 @@ class brick:
     
     def check_if_valid(self,field):
         #Method to check if resulted position is valid after taking certain actions
+        
+        #######################################################################################
+        #Implementation for stick with 0 orientation
+        #######################################################################################
+        
         if self.shape==1 and self.orientation==0:
             
             #First action gravity
-            
-            #Implementation for stick
-            #If position is cutting a dead field, set state to -1
             if self.action=="gravity":
-                if np.sum(field[(self.pos[0]-5):(self.pos[0]-1),self.pos[1]])<2:
+                
+                #If position is cutting a dead field, set state to -1, meaning check if one step 
+                #ahead, we will hit a -1
+                if np.sum(field[(self.pos[0]-5):(self.pos[0]-1),self.pos[1]])<3:
                     self.state = -1
                     self.freeze=True
                 #If position is not touching anything, set state to 1
@@ -47,10 +52,8 @@ class brick:
                     self.state = 1
             
             #Now actions translate_right and translate_left:
-            
-            #Implementation for stick
-            
             if self.action=="trans_left" or self.action=="trans_right":
+                
                 #If position is cutting a dead field, set state to -1
                 if np.sum(field[(self.pos[0]-5):(self.pos[0]-1),self.pos[1]])<0:
                     self.state = -1
@@ -58,6 +61,35 @@ class brick:
                 #If position is not touching anything, set state to 1
                 else:
                     self.state = 1
+        
+        #####################################################################################
+        #Implementation for stick with 1 orientation
+        #####################################################################################
+        
+        """if self.shape==1 and self.orientation==1:
+            
+            #First action gravity
+            if self.action=="gravity":
+                
+                #If position is cutting a dead field, set state to -1, meaning check if one step 
+                #ahead, we will hit a -1
+                if np.sum(field[self.pos[0],(self.pos[1]])<3:
+                    self.state = -1
+                    self.freeze=True
+                #If position is not touching anything, set state to 1
+                else:
+                    self.state = 1
+            
+            #Now actions translate_right and translate_left:
+            if self.action=="trans_left" or self.action=="trans_right":
+                
+                #If position is cutting a dead field, set state to -1
+                if np.sum(field[(self.pos[0]-5):(self.pos[0]-1),self.pos[1]])<0:
+                    self.state = -1
+                    self.freeze = True
+                #If position is not touching anything, set state to 1
+                else:
+                    self.state = 1"""
             
             #Needs another state for game over
         
@@ -121,48 +153,19 @@ class brick:
         #Rotate in positive direction
         self.orientation = (self.orientation+1)%3
         self.action = "rotate"
+        return(self)
     
     def lotate(self):
         #Rotate in negative direction
         self.orientation = (self.orientation-1)%3
         self.action = "lotate"
-    
+        return(self)
         
-        
-a = brick(shape=1)
-#a.check_if_valid(tetris)
-a.project(tetris)
-plt.matshow(tetris, cmap=plt.cm.Blues)
-a.gravity()
-a.check_if_valid(tetris)
-a.project(tetris)
-plt.matshow(tetris, cmap=plt.cm.Blues)
-a.translate_right()
-a.check_if_valid(tetris)
-a.project(tetris)
-plt.matshow(tetris, cmap=plt.cm.Blues)   
-a.translate_right()
-a.check_if_valid(tetris)
-a.project(tetris)
-plt.matshow(tetris, cmap=plt.cm.Blues)   
-a.translate_right()
-a.check_if_valid(tetris)
-a.project(tetris)
-plt.matshow(tetris, cmap=plt.cm.Blues)   
-
-
-tetris_test = np.zeros(shape=(n,m))
-tetris_test[0,:] = 5
-tetris_test[n-1,:] = 3
-tetris_test[:,0] = 5
-tetris_test[:,m-1] = 5
-b = brick(shape=1)
-b.project(tetris_test)   
-for i in range(0,30):
-    b.gravity()
-    b.check_if_valid(tetris_test)
-    b.project(tetris_test)
-    if b.freeze==True:
-        break
-        
-plt.matshow(tetris_test)  
+    def reset(self,shape):
+        self.pos = [20,10]
+        self.shape = shape
+        self.orientation = 0
+        self.state = 1
+        self.action = "wait"
+        self.game_over = False
+        self.freeze = False
