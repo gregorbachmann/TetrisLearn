@@ -1,517 +1,236 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 24 14:00:06 2018
+Created on Fri Apr 27 19:15:19 2018
 
 @author: gregorbachmann
 """
 
-#####################################################################################
-#Implementation of class brick
-#####################################################################################
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 
-#Choose initial dimensions of tetris grid
-n = 20
-m = 22
-
-#Initialize empty array and set edges to 5 
-tetris = np.zeros(shape=(n,m))
-tetris[0,:] = 5
-tetris[n-1,:] = -3
-tetris[:,0] = 5
-tetris[:,m-1] = 5
-
-class brick:
-    def __init__(self, shape ,pos=[20,10],orientation=0,state=1,action="wait",game_over=False,freeze=False):
+class blocks:
+    def __init__(self, shape ,pos=[0,5],orientation=0):
         self.pos = pos
         self.shape = shape
         self.orientation = orientation
-        self.state = state
-        self.action = action
-        self.game_over = game_over
-        self.freeze = freeze
+        
     
-    def check_if_valid(self,field):
-        #Method to check if resulted position is valid after taking certain actions
+    def get_matrix(self):
+        if self.shape==0: #STICK
+            if self.orientation==0 or self.orientation==2:
+                A = np.ones((1,4))
+                self.ground=1
+                self.side=4
+            if self.orientation==1 or self.orientation==3:
+                A = np.ones((4,1))
+                self.ground=4
+                self.side=1
         
-        #######################################################################################
-        #Implementation for stick with orientation 0
-        #######################################################################################
-        
-        if self.shape==1 and self.orientation==0:
-      
-            #If position is cutting a dead field, set state to -1, meaning check if one step 
-            #ahead, we will hit a -1
-            if np.sum(field[self.pos[0]-5,self.pos[1]])<0:
-                self.state = -1
-                self.freeze=True
-            #If position is not touching anything, set state to 1
-            else:
-                self.state = 1
+        if self.shape==1: #TRIANGLE
+            if self.orientation==0:
+                A = np.zeros((2,3))
+                A[1,0:3] = 1
+                A[0,1] = 1
+                self.ground = 2
+                self.side=3
+            if self.orientation==1:
+                A = np.zeros((3,2))
+                A[0:3,0] = 1
+                A[1,1] = 1
+                self.ground=3
+                self.side=2
+            if self.orientation==2:
+                A = np.zeros((2,3))
+                A[0,0:3] = 1
+                A[1,1] = 1
+                self.ground=2
+                self.side=3
+            if self.orientation==3:
+                A = np.zeros((3,2))
+                A[0:3,1] = 1
+                A[1,0] = 1
+                self.ground=3
+                self.side=2
             
-            
-        #####################################################################################
-        #Implementation for stick with orientation 1
-        #####################################################################################
+        if self.shape==2: #LEFT L
+            if self.orientation==0:
+                A = np.zeros((2,3))
+                A[1,0:3] = 1
+                A[0,0] = 1
+                self.ground=2
+                self.side=3
+            if self.orientation==1:
+                A = np.zeros((3,2))
+                A[0:3,0] = 1
+                A[0,1] = 1
+                self.ground=3
+                self.side=2
+            if self.orientation==2:
+                A = np.zeros((2,3))
+                A[0,0:3] = 1
+                A[1,2] = 1
+                self.ground=2
+                self.side=3
+            if self.orientation==3:
+                A = np.zeros((3,2))
+                A[0:3,1] = 1
+                A[2,0] = 1
+                self.ground=3
+                self.side=2
         
-        if self.shape==1 and self.orientation==1:
-            
-                #If position is cutting a dead field, set state to -1, meaning check if one step 
-                #ahead, we will hit a -1
-                if np.sum(field[self.pos[0]-3,(self.pos[1]-1):(self.pos[1]+3)])<0:
-                    self.state = -1
-                    self.freeze=True
-                #If position is not touching anything, set state to 1
-                else:
-                    self.state = 1
+        if self.shape==3: #RIGHT L
+            if self.orientation==0:
+                A = np.zeros((2,3))
+                A[1,0:3] = 1
+                A[0,2] = 1
+                self.ground=2
+                self.side=3
+            if self.orientation==1:
+                A = np.zeros((3,2))
+                A[0:3,0] = 1
+                A[2,1] = 1
+                self.ground=3
+                self.side=2
+            if self.orientation==2:
+                A = np.zeros((2,3))
+                A[0,0:3] = 1
+                A[1,0] = 1
+                self.ground=2
+                self.side=3
+            if self.orientation==3:
+                A = np.zeros((3,2))
+                A[0:3,1] = 1
+                A[0,0] = 1
+                self.ground=3
+                self.side=2
         
-        #####################################################################################
-        #Implementation for triangle with orientation 0
-        #####################################################################################
+        if self.shape==4: #LEFT S
+            if self.orientation==0 or self.orientation==2:
+                A = np.zeros((2,3))
+                A[0,1:3] = 1
+                A[1,0:2] = 1
+                self.ground=2
+                self.side=3
+            if self.orientation==1 or self.orientation==3:
+                A = np.zeros((3,2))
+                A[0:2,0] = 1
+                A[1:3,1] = 1
+                self.ground=3
+                self.side=2
         
-        if self.shape==2 and self.orientation==0:
-            
-                #If position is cutting a dead field, set state to -1, meaning check if one step 
-                #ahead, we will hit a -1
-                if np.sum(field[self.pos[0]-3,(self.pos[1]-1):(self.pos[1]+2)])<0: 
-                    self.state = -1
-                    self.freeze=True
-                #If position is not touching anything, set state to 1
-                else:
-                    self.state = 1
+        if self.shape==4: #RIGHT S
+            if self.orientation==0 or self.orientation==2:
+                A = np.zeros((2,3))
+                A[0,0:2] = 1
+                A[1,1:3] = 1
+                self.ground=2
+                self.side=3
+            if self.orientation==1 or self.orientation==3:
+                A = np.zeros((3,2))
+                A[0:2,1] = 1
+                A[1:3,0] = 1
+                self.ground=3
+                self.side=2
         
-        #####################################################################################
-        #Implementation for triangle with orientation 1
-        #####################################################################################
-        
-        if self.shape==2 and self.orientation==1:
-            
-                #If position is cutting a dead field, set state to -1, meaning check if one step 
-                #ahead, we will hit a -1
-                if field[self.pos[0]-4,self.pos[1]]<0 or field[self.pos[0]-3,self.pos[1]-1]<0: 
-                    self.state = -1
-                    self.freeze=True
-                #If position is not touching anything, set state to 1
-                else:
-                    self.state = 1
-        
-        #####################################################################################
-        #Implementation for triangle with orientation 2
-        #####################################################################################
-        
-        if self.shape==2 and self.orientation==2:
-            
-                #If position is cutting a dead field, set state to -1, meaning check if one step 
-                #ahead, we will hit a -1
-                if field[self.pos[0]-2,self.pos[1]-1]<0 or field[self.pos[0]-2,self.pos[1]+2]<0 or field[self.pos[0]-3,self.pos[1]]<0: 
-                    self.state = -1
-                    self.freeze=True
-                #If position is not touching anything, set state to 1
-                else:
-                    self.state = 1
-        
-        #####################################################################################
-        #Implementation for triangle with orientation 3
-        #####################################################################################
-        
-        if self.shape==2 and self.orientation==3:
-            
-                #If position is cutting a dead field, set state to -1, meaning check if one step 
-                #ahead, we will hit a -1
-                if field[self.pos[0]-4,self.pos[1]]<0 or field[self.pos[0]-3,self.pos[1]+1]<0: 
-                    self.state = -1
-                    self.freeze=True
-                #If position is not touching anything, set state to 1
-                else:
-                    self.state = 1
-        
-        #####################################################################################
-        #Implementation for left L with orientation 0
-        #####################################################################################
-        
-        if self.shape==3 and self.orientation==0:
-            #If position is cutting a dead field, set state to -1, meaning check if one step 
-            #ahead, we will hit a -1
-            if field[(self.pos[0]-4),(self.pos[1])]<0 or field[self.pos[0]-2,self.pos[1]-1]<0:
-                self.state = -1
-                self.freeze=True
-                #If position is not touching anything, set state to 1
-            else:
-                self.state = 1
-        
-        #####################################################################################
-        #Implementation for left L with orientation 1
-        #####################################################################################
-        
-        if self.shape==3 and self.orientation==1:
-            #If position is cutting a dead field, set state to -1, meaning check if one step 
-            #ahead, we will hit a -1
-            if field[(self.pos[0]-3),(self.pos[1]-1)]<0 or np.sum(field[self.pos[0]-2,(self.pos[1]):(self.pos[1]+2)])<0:
-                self.state = -1
-                self.freeze=True
-                #If position is not touching anything, set state to 1
-            else:
-                self.state = 1
-         
-        #####################################################################################
-        #Implementation for left L with orientation 2
-        #####################################################################################
-        
-        if self.shape==3 and self.orientation==2:
-            #If position is cutting a dead field, set state to -1, meaning check if one step 
-            #ahead, we will hit a -1
-            if field[(self.pos[0]-4),(self.pos[1]):(self.pos[1]+1)]<0: 
-                self.state = -1
-                self.freeze=True
-                #If position is not touching anything, set state to 1
-            else:
-                self.state = 1
-        
-        #####################################################################################
-        #Implementation for left L with orientation 3
-        #####################################################################################
-        
-        if self.shape==3 and self.orientation==3:
-            #If position is cutting a dead field, set state to -1, meaning check if one step 
-            #ahead, we will hit a -1
-            if np.sum(field[(self.pos[0]-3),(self.pos[1]-2):(self.pos[1]+1)])<0: 
-                self.state = -1
-                self.freeze=True
-                #If position is not touching anything, set state to 1
-            else:
-                self.state = 1
-        
-        #####################################################################################
-        #Implementation for right L with orientation 0
-        #####################################################################################
-        
-        if self.shape==4 and self.orientation==0:
-            #If position is cutting a dead field, set state to -1, meaning check if one step 
-            #ahead, we will hit a -1
-            if field[(self.pos[0]-4),(self.pos[1])]<0 or field[self.pos[0]-2,self.pos[1]+1]<0:
-                self.state = -1
-                self.freeze=True
-                #If position is not touching anything, set state to 1
-            else:
-                self.state = 1
-        
-        #####################################################################################
-        #Implementation for right L with orientation 1
-        #####################################################################################
-        
-        if self.shape==4 and self.orientation==1:
-            #If position is cutting a dead field, set state to -1, meaning check if one step 
-            #ahead, we will hit a -1
-            if field[(self.pos[0]-3),(self.pos[1]+1)]<0 or np.sum(field[self.pos[0]-2,(self.pos[1]):(self.pos[1]+2)])<0:
-                self.state = -1
-                self.freeze=True
-                #If position is not touching anything, set state to 1
-            else:
-                self.state = 1
-         
-        #####################################################################################
-        #Implementation for right L with orientation 2
-        #####################################################################################
-        
-        if self.shape==4 and self.orientation==2:
-            #If position is cutting a dead field, set state to -1, meaning check if one step 
-            #ahead, we will hit a -1
-            if field[(self.pos[0]-4),(self.pos[1]):(self.pos[1]+1)]<0: 
-                self.state = -1
-                self.freeze=True
-                #If position is not touching anything, set state to 1
-            else:
-                self.state = 1
-        
-        #####################################################################################
-        #Implementation for right L with orientation 3
-        #####################################################################################
-        
-        if self.shape==4 and self.orientation==3:
-            #If position is cutting a dead field, set state to -1, meaning check if one step 
-            #ahead, we will hit a -1
-            if np.sum(field[(self.pos[0]-3),(self.pos[1]-2):(self.pos[1]+1)])<0: 
-                self.state = -1
-                self.freeze=True
-                #If position is not touching anything, set state to 1
-            else:
-                self.state = 1
-        
-        
-        
-        return(self)
+        if self.shape==5: #SQUARE
+            A = np.ones((2,2))
+            self.ground=2
+            self.side=2
+        return A
+ 
+
+class tetris:
+    sizeX=10
+    sizeY=10
+    block=blocks(2)
+    field=np.zeros((sizeX,sizeY))
     
-    
-    
-    def project(self,field):
-        #First need to delete all current movement to overwrite it with new projection
-        #So replace all 1's by 0.
-        #Could be solved more elegantly P almost surely
-        for i in range(0,n):
-            for j in range(0,m):
-                if field[i,j]==1:
-                    field[i,j]=0
-        
-        ################################################################################
-        #Implement motion of brick when not touching anything, hence staying "alive":
-        #################################################################################
-        
-        ################################################################################
-        #Implementation for stick
-        #################################################################################
-        
-        #Projection on grid for stick in orientation 0
-        if self.shape==1 and self.orientation==0 and self.state==1:
-            field[(self.pos[0]-5):(self.pos[0]-1),self.pos[1]]=1
-        
-        #Projection on grid for stick in orientation 1
-        if self.shape==1 and self.orientation==1 and self.state==1:
-            field[self.pos[0]-3,(self.pos[1]-1):(self.pos[1]+3)]=1
-        
-        
-        ################################################################################
-        #Implementation for triangle
-        #################################################################################
-        
-        #Projection on grid for triangle in orientation 0
-        if self.shape==2 and self.orientation==0 and self.state==1:
-            field[self.pos[0]-3,(self.pos[1]-1):(self.pos[1]+2)]=1
-            field[self.pos[0]-2,self.pos[1]]=1
-        
-        #Projection on grid for triangle in orientation 1
-        if self.shape==2 and self.orientation==1 and self.state==1:
-            field[(self.pos[0]-4):(self.pos[0]-1),self.pos[1]]=1
-            field[self.pos[0]-3,self.pos[1]-1]=1
-        
-        #Projection on grid for triangle in orientation 2
-        if self.shape==2 and self.orientation==2 and self.state==1:
-            field[self.pos[0]-2,(self.pos[1]-1):(self.pos[1]+2)]=1
-            field[self.pos[0]-3,self.pos[1]]=1
-        
-        #Projection on grid for triangle in orientation 3
-        if self.shape==2 and self.orientation==3 and self.state==1:
-            field[(self.pos[0]-4):(self.pos[0]-1),self.pos[1]]=1
-            field[self.pos[0]-3,self.pos[1]+1]=1
-        
-        
-        ################################################################################
-        #Implementation for left L
-        #################################################################################
-        
-        #Projection on grid for left L in orientation 0
-        if self.shape==3 and self.orientation==0 and self.state==1:
-            field[(self.pos[0]-4):(self.pos[0]-1),(self.pos[1])]=1
-            field[self.pos[0]-2,self.pos[1]-1]=1
-        
-        #Projection on grid for left L in orientation 1
-        if self.shape==3 and self.orientation==1 and self.state==1:
-            field[self.pos[0]-2,(self.pos[1]-1):(self.pos[1]+2)]=1
-            field[self.pos[0]-3,self.pos[1]-1]=1
-            
-        #Projection on grid for left L in orientation 2
-        if self.shape==3 and self.orientation==2 and self.state==1:
-            field[(self.pos[0]-4):(self.pos[0]-1),self.pos[1]]=1
-            field[self.pos[0]-4,self.pos[1]+1]=1
-        
-        #Projection on grid for left L in orientation 3
-        if self.shape==3 and self.orientation==3 and self.state==1:
-            field[(self.pos[0]-3),(self.pos[1]-2):(self.pos[1]+1)]=1
-            field[self.pos[0]-2,self.pos[1]]=1
-            
-        ################################################################################
-        #Implementation for right L
-        #################################################################################
-        
-        #Projection on grid for right L in orientation 0
-        if self.shape==4 and self.orientation==0 and self.state==1:
-            field[(self.pos[0]-4):(self.pos[0]-1),(self.pos[1])]=1
-            field[self.pos[0]-2,self.pos[1]+1]=1
-        
-        #Projection on grid for right L in orientation 1
-        if self.shape==4 and self.orientation==1 and self.state==1:
-            field[self.pos[0]-2,(self.pos[1]-1):(self.pos[1]+2)]=1
-            field[self.pos[0]-3,self.pos[1]+1]=1
-            
-        #Projection on grid for right L in orientation 2
-        if self.shape==4 and self.orientation==2 and self.state==1:
-            field[(self.pos[0]-4):(self.pos[0]-1),self.pos[1]]=1
-            field[self.pos[0]-4,self.pos[1]-1]=1
-        
-        #Projection on grid for right L in orientation 3
-        if self.shape==4 and self.orientation==3 and self.state==1:
-            field[(self.pos[0]-3),(self.pos[1]-2):(self.pos[1]+1)]=1
-            field[self.pos[0]-2,self.pos[1]-2]=1
-        
-        ################################################################################
-        #Implementation for left S
-        #################################################################################
-        
-        #Projection on grid for left S in orientation 0
-        if self.shape==5 and self.orientation==0 and self.state==1:
-            field[(self.pos[0]-2),(self.pos[1]-1):(self.pos[1]+1)]=1
-            field[self.pos[0]-3,self.pos[1]:(self.pos[1]+2)]=1
-        
-        #Projection on grid for left S in orientation 1
-        if self.shape==5 and self.orientation==1 and self.state==1:
-            field[(self.pos[0]-3):(self.pos[0]-1),self.pos[1]]=1
-            field[(self.pos[0]-4):(self.pos[0]-2),self.pos[1]-1]=1
-            
-        #Projection on grid for left S in orientation 2
-        if self.shape==5 and self.orientation==2 and self.state==1:
-            field[(self.pos[0]-4):(self.pos[0]-1),self.pos[1]]=1
-            field[self.pos[0]-4,self.pos[1]-1]=1
-        
-        #Projection on grid for left S in orientation 3
-        if self.shape==5 and self.orientation==3 and self.state==1:
-            field[(self.pos[0]-3),(self.pos[1]-2):(self.pos[1]+1)]=1
-            field[self.pos[0]-2,self.pos[1]-2]=1
-        
-        ###############################################################################
-        #Implement projection when brick touches ground/other brick but it's not 
-        #game over yet:
-        ###############################################################################
-        
-        ##############################################################################
-        #Implementation for stick
-        ##############################################################################
-        
-        #Projection on grid for stick in orientation 0
-        if self.shape==1 and self.orientation==0 and self.state==-1:
-            field[(self.pos[0]-4):(self.pos[0]),self.pos[1]]=-1
-        
-        #Projection on grid for stick in orientation 1
-        if self.shape==1 and self.orientation==1 and self.state==-1:
-            field[self.pos[0]-2,(self.pos[1]-1):(self.pos[1]+3)]=-1
-        
-        
-        ##############################################################################
-        #Implementation for triangle
-        ##############################################################################
-        
-        #Projection on grid for triangle in orientation 0
-        if self.shape==2 and self.orientation==0 and self.state==-1:
-            field[self.pos[0]-2,(self.pos[1]-1):(self.pos[1]+2)]=-1
-            field[self.pos[0]-1,self.pos[1]]=-1
-        
-        #Projection on grid for triangle in orientation 1
-        if self.shape==2 and self.orientation==1 and self.state==-1:
-            field[(self.pos[0]-3):(self.pos[0]),self.pos[1]]=-1
-            field[self.pos[0]-2,self.pos[1]-1]=-1
-        
-        #Projection on grid for triangle in orientation 2
-        if self.shape==2 and self.orientation==2 and self.state==-1:
-            field[self.pos[0]-1,(self.pos[1]-1):(self.pos[1]+2)]=-1
-            field[self.pos[0]-2,self.pos[1]]=-1
-        
-        #Projection on grid for triangle in orientation 1
-        if self.shape==2 and self.orientation==3 and self.state==-1:
-            field[(self.pos[0]-3):(self.pos[0]),self.pos[1]]=-1
-            field[self.pos[0]-2,self.pos[1]+1]=-1
-        
-        ################################################################################
-        #Implementation for left L
-        #################################################################################
-        
-        #Projection on grid for left L in orientation 0
-        if self.shape==3 and self.orientation==0 and self.state==-1:
-            field[(self.pos[0]-3):(self.pos[0]),(self.pos[1])]=-1
-            field[self.pos[0]-1,self.pos[1]-1]=-1
-        
-        #Projection on grid for left L in orientation 1
-        if self.shape==3 and self.orientation==1 and self.state==-1:
-            field[self.pos[0]-1,(self.pos[1]-1):(self.pos[1]+2)]=-1
-            field[self.pos[0]-2,self.pos[1]-1]=-1
-        
-        #Projection on grid for left L in orientation 2
-        if self.shape==3 and self.orientation==2 and self.state==-1:
-            field[(self.pos[0]-3):(self.pos[0]),self.pos[1]]=-1
-            field[self.pos[0]-3,self.pos[1]+1]=-1
-        
-        #Projection on grid for left L in orientation 3
-        if self.shape==3 and self.orientation==3 and self.state==-1:
-            field[(self.pos[0]-2),(self.pos[1]-2):(self.pos[1]+1)]=-1
-            field[self.pos[0]-1,self.pos[1]]=-1
-        
-        
-        ################################################################################
-        #Implementation for right L
-        #################################################################################
-        
-        #Projection on grid for right L in orientation 0
-        if self.shape==4 and self.orientation==0 and self.state==-1:
-            field[(self.pos[0]-3):(self.pos[0]),(self.pos[1])]=-1
-            field[self.pos[0]-1,self.pos[1]+1]=-1
-        
-        #Projection on grid for right L in orientation 1
-        if self.shape==4 and self.orientation==1 and self.state==-1:
-            field[self.pos[0]-1,(self.pos[1]-1):(self.pos[1]+2)]=-1
-            field[self.pos[0]-2,self.pos[1]+1]=-1
-        
-        #Projection on grid for right L in orientation 2
-        if self.shape==4 and self.orientation==2 and self.state==-1:
-            field[(self.pos[0]-3):(self.pos[0]),self.pos[1]]=-1
-            field[self.pos[0]-3,self.pos[1]-1]=-1
-        
-        #Projection on grid for right L in orientation 3
-        if self.shape==4 and self.orientation==3 and self.state==-1:
-            field[(self.pos[0]-2),(self.pos[1]-2):(self.pos[1]+1)]=-1
-            field[self.pos[0]-1,self.pos[1]]=-1
-        
-        
-        return(field)
-          
-    def gravity(self):
-        #Shift y argument of position one down, always needs to be followed by 
-        #check_if_valid before using project to ensure we have a valid state
-        #Needs no case distinction as all objects are characterized by their position
-        self.pos[0] = self.pos[0]-1
-        self.action = "gravity"
-        return(self)
-    
-    ##################################################################################
-    #Actions the neural network can take:
-    ##################################################################################
-    
-    def translate_left(self):
-        #Again we only have to shift x coordinate of position and need no case distinction
-        #Also needs to be followed by a check_if_valid
-        self.pos[1] = self.pos[1]-1
-        self.action = "trans_left"
-        return(self)
-    
-    def translate_right(self):
-        #Again we only have to shift x coordinate of position and need no case distinction
-        #Also needs to be followed by a check_if_valid
-        self.pos[1] = self.pos[1]+1
-        self.action = "trans_right"
-        return(self)
-    
-    def wait(self):
-        #Don't do anything
-        self.action = "wait"
-        return(self)
+    def __init__(self,sizeX=10,sizeY=10):
+        self.sizeX=sizeX
+        self.sizeY=sizeY
+        self.field=np.zeros((sizeX,sizeY))
     
     def rotate(self):
-        #Rotate in positive direction
-        self.orientation = (self.orientation+1)%4
-        self.action = "rotate"
+        self.block.orientation+=1
+        self.block.orientation=self.block.orientation%4
+        A=self.block.get_matrix()
+        
+        if self.block.shape==0 and (self.block.orientation==0 or self.block.orientation==2):
+            self.block.pos[1]+=1
+        if self.block.shape==0 and (self.block.orientation==1 or self.block.orientation==3):
+            self.block.pos[1]-=1
+        if self.check_if_valid():
+            self.block.orientation-=1
+            self.block.orientation=self.block.orientation%4
+            A=self.block.get_matrix()
+
         return(self)
     
-    def lotate(self):
-        #Rotate in negative direction
-        self.orientation = (self.orientation-1)%4
-        self.action = "lotate"
-        return(self)
+    def translate_left(self):
+        self.block.pos[1]-=1
+        if self.check_if_valid():
+            self.block.pos[1]+=1
+        return(self) 
+     
+    def translate_right(self):
+        self.block.pos[1]+=1
+        if self.check_if_valid():
+            self.block.pos[1]-=1
+        return(self) 
+     
+    def gravitate(self):
+        self.block.pos[0]+=1
+        if self.check_if_valid():
+            A = self.block.get_matrix()
+            self.clean()
+            self.field[self.block.pos[0]:(self.block.pos[0]+A.shape[0]),self.block.pos[1]:(self.block.pos[1]+A.shape[1])]-=A
+            self.new_block()
+            self.delete_row()
         
-    def reset(self,shape):
-        self.pos = [20,10]
-        self.shape = shape
-        self.orientation = 0
-        self.state = 1
-        self.action = "wait"
-        self.game_over = False
-        self.freeze = False
+    
+    def check_if_valid(self):
+        A = self.block.get_matrix()
+        i_0 = A.shape[0]
+        j_0 = A.shape[1]
+        if self.block.pos[1]<0 or self.block.pos[1]+self.block.side>self.field.shape[1] or self.block.pos[0]<0 or self.block.pos[0]+self.block.ground>self.field.shape[0]-1:
+            return True
+        else:
+            for i in range(0,i_0):
+                for j in range(0,j_0):
+                    if self.field[self.block.pos[0]+i+1,self.block.pos[1]+j]==-1 and A[i,j]==1:
+                        #self.block.pos[0]-=1
+                        return True
+        return False
+    
+    
+    def new_block(self):
+        s=np.random.randint(0,6)
+        r=np.random.randint(0,3)
+        self.block=blocks(shape=s,orientation=r,pos=[0,5])
+        if self.check_if_valid():
+            self.block=None
+            print('YOU LOST, could not generate any more blocks')
+            return False
+        else:
+            return True
+    
+    def delete_row(self):
+        for i in range(self.field.shape[1]):
+            if np.sum(m.field[i,:])==-10:
+                print('totally full')
+                self.field=np.delete(self.field,i,axis=0)
+                self.field=np.insert(self.field,0,0,axis=0) 
+    
+    def clean(self):
+        for i in range(0,self.field.shape[0]):
+            for j in range(0,self.field.shape[1]):
+                if self.field[i,j]==1:
+                    self.field[i,j]=0
+    def project(self):
+        self.clean()
+        A = self.block.get_matrix()
+        self.field[self.block.pos[0]:(self.block.pos[0]+A.shape[0]),self.block.pos[1]:(self.block.pos[1]+A.shape[1])]+=A
+        
+    def draw(self):
+        plt.matshow(self.field)
