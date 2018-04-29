@@ -145,11 +145,13 @@ class tetris:
     sizeY=10
     block=blocks(2)
     field=np.zeros((sizeX,sizeY))
+    points=0
     
-    def __init__(self,sizeX=10,sizeY=10):
+    def __init__(self,sizeX=10,sizeY=10,points=0):
         self.sizeX=sizeX
         self.sizeY=sizeY
         self.field=np.zeros((sizeX,sizeY))
+        self.points=points
     
     def rotate(self):
         self.block.orientation+=1
@@ -167,6 +169,9 @@ class tetris:
 
         return(self)
     
+    def wait(self):
+        return(self)
+        
     def translate_left(self):
         self.block.pos[1]-=1
         if self.check_if_valid():
@@ -201,6 +206,7 @@ class tetris:
                     if self.field[self.block.pos[0]+i+1,self.block.pos[1]+j]==-1 and A[i,j]==1:
                         #self.block.pos[0]-=1
                         return True
+        self.points+=1
         return False
     
     
@@ -211,6 +217,7 @@ class tetris:
         if self.check_if_valid():
             self.block=None
             print('YOU LOST, could not generate any more blocks')
+            print(self.points)
             return False
         else:
             return True
@@ -220,7 +227,8 @@ class tetris:
             if np.sum(m.field[i,:])==-10:
                 print('totally full')
                 self.field=np.delete(self.field,i,axis=0)
-                self.field=np.insert(self.field,0,0,axis=0) 
+                self.field=np.insert(self.field,0,0,axis=0)
+                self.points+=10
     
     def clean(self):
         for i in range(0,self.field.shape[0]):
@@ -234,3 +242,9 @@ class tetris:
         
     def draw(self):
         plt.matshow(self.field)
+    
+    def reset(self):
+        self.sizeX=10
+        self.sizeY=10
+        self.field=np.zeros((10,10))
+        self.block=blocks(2)
