@@ -112,12 +112,12 @@ class blocks:
 # Class to simulate all steps in tetris and methods to plot the game
 class tetris:
     sizeX = 10
-    sizeY = 10
+    sizeY = 20
     block = blocks(2)
     field = np.zeros((sizeX, sizeY))
     points = 0
 
-    def __init__(self, sizeX=10, sizeY=10, points=0):
+    def __init__(self, sizeX=10, sizeY=20, points=0):
         self.sizeX = sizeX
         self.sizeY = sizeY
         self.field = np.zeros((sizeX, sizeY))
@@ -184,7 +184,7 @@ class tetris:
                     if self.field[self.block.pos[0] + i, self.block.pos[1] + j] == -1 and A[i, j] == 1:
                         # self.block.pos[0]-=1
                         return True
-        self.points += 1
+
         return False
 
     def new_block(self):
@@ -197,6 +197,7 @@ class tetris:
             print(self.points)
             return False
         else:
+            self.points += 1
             return True
 
     def delete_row(self):
@@ -224,6 +225,6 @@ class tetris:
 
     def reset(self):
         self.sizeX = 10
-        self.sizeY = 10
-        self.field = np.zeros((10, 10))
+        self.sizeY = 20
+        self.field = np.zeros((20, 10))
         self.block.reset()
