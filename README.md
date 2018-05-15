@@ -10,4 +10,8 @@ Our initial goal in this project was to get acquainted with the idea of Reinforc
 
 Let's first get to dry theory. How the hack is it possible to let an agent learn how to play games??
 We first need to introduce some definitions. I will always give an example for these definitions using our implementation of Tetris.
-  * **Agent**:  Our AI that will learn to play the game 
+  * **Agent**:  Our AI that will learn to play the game. 
+                In the case of Tetris this will be our Convolutional Neural Network. 
+  * **State**:  The instance that our agent will be able to observe at time t.
+  In the case of Tetris, this will be a snapshot of the game.
+  * **Action**: Actions that our agent can take in order to change the current state. In Tetris, this will either be *Wait*, *Left*, *Right* and *Rotate*.
