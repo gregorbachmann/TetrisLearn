@@ -8,6 +8,8 @@ Our initial goal in this project was to get acquainted with the idea of Reinforc
 
 # The Theory of Reinforcement Learning
 
+### Definitions
+
 Let's first get to dry theory. How the hack is it possible to let an agent learn how to play games??
 We first need to introduce some definitions. I will always give an example for these definitions using our implementation of Tetris.
   * **Agent**:  Our AI that will learn to play the game. 
@@ -35,11 +37,12 @@ A complete summary of the game is therefore given by the following sequence:
 
 ${S_{0}, A_{0}, r_{0}, ... , S_{n}, A_{n}, r_{n}}$
 
-What will be very important later is the following observation:
-$R_{t} = r_{t} + R_{t+1}$
-In words we can write the total future reward at time t as the sum of the reward we get for going from $S_{t}$ to $S_{t+1}$ plus the total future reward at time t+1.
+What will be very important later is the following observation:\
+$R_{t} = r_{t} + R_{t+1}$ \
+In words we can write the total future reward at time t as the sum of the reward we get for going from $S_{t}$ to $S_{t+1}$ plus the total future reward at time t+1.\
 Makes perfect sense so far.
 
+### Q-Learning
 
 Having these definitions now out of the way, let's get our hands dirty with the actual theory behind Reinforcement Learning.
 
