@@ -16,7 +16,8 @@ We first need to introduce some definitions. I will always give an example for t
   * **State**:  An instance $S_{t}$ of the environment that our agent will be able to observe at time t. 
                 
   * **Action**: An action $A_{t}$ that our agent can take in order to change the current state. 
-  * **Reward**: The points R_{t} that our agent gets for changing the current state by performing a certain action.
+  * **Reward**: The points r_{t} that our agent gets for changing the current state by performing a certain action.
+  * **Future Reward**: The future points we get at time t: $R_{t} = r_{t} + r_{t+1} + ... + r_{n}$
   * **Episode**: One complete walk through the environment until the agent reaches a final state.
   
 In the case of Tetris, the agent will be our Convolutional Neural Network. The environment is the game itself with which the agent can interact. The states are given by snapshots of the game, a.k.a. the image one sees when playing the game. The possible actions that our agent can perform are *Wait*, *Left*, *Right* and *Rotate*.
@@ -25,7 +26,10 @@ The episode is simply one round of Tetris until our agent loses. (GameOver)
 
 One episode will therefore be described by the following sequence where $S_{n}$ will be the final state:
 
-${S_{0}, A_{0}, R_{0}, ... , S_{n}, A_{n}, R_{n}}$
+${S_{0}, A_{0}, r_{0}, ... , S_{n}, A_{n}, r_{n}}$
+
+What will be very important later is the following observation:
+$R_{t} = r_{t} + R_{t+1}$
 
 
 Having these definitions now out of the way, we can start with the actual theory behind Reinforcement Learning.
@@ -39,4 +43,4 @@ What if we could predict the future reward we get if we choose action $A_{t}$ gi
 Namely if we had a function that maps state and action pairs $(S_{t}, A_{t})$ to future rewards, we could always choose the action
 that maximizes this function and the problem would be solved.
 
-Let's call this function **Q-Function**:
+Let's call this function **Q-Function**: Q(S,A)
