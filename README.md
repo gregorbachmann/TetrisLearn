@@ -1,5 +1,5 @@
-# TetrisLearn
-Machine Learning Tetris convolutional neural net with evolution
+# Machine Learning Tetris convolutional neural net with evolution
+
 
 # Overview
 
