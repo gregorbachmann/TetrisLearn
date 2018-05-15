@@ -1,4 +1,4 @@
-# Machine Learning Tetris convolutional neural net with evolution
+# How To Play Tetris With Deep-Q-Learning
 
 
 # Overview
