@@ -10,4 +10,4 @@ Our initial goal in this project was to get acquainted with the idea of Reinforc
 
 Let's first get to dry theory. How the hack is it possible to let an agent learn how to play games??
 We first need to introduce some definitions. I will always give an example for these definitions using our implementation of Tetris.
-
+⋅⋅* **Agent**. 
