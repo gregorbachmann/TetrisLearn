@@ -20,12 +20,13 @@ We first need to introduce some definitions. I will always give an example for t
   * **Action**: An action $A_{t}$ that our agent can take in order to change the current state. 
   * **Reward**: The points r_{t} that our agent gets for changing the current state by performing a certain action.
   * **Total Future Reward**: The future points we get at time t: $R_{t} = r_{t} + r_{t+1} + ... + r_{n}$
+  
   * **Discounted Future Reward**: The future points we get at time t: $R_{t} = r_{t} + \gamma * r_{t+1} + ... + \gamma^{n} * r_{n}$
   * **Episode**: One complete walk through the environment until the agent reaches a final state.
   
 Don't worry about these rather technical definitions, they are all actually very natural to our problem.\
-In the case of Tetris, the agent will be our Convolutional Neural Network. \
-The environment is the game itself with which the agent can interact. It is partly stochastic as we never know what new block will appear at the top when we place the block before on the bottom.\
+In the case of Tetris, the agent will be our Convolutional Neural Network and
+the environment is the game itself with which the agent can interact. It is partly stochastic as we never know what new block will appear at the top when we place the block before on the bottom.\
 The states are given by snapshots of the game, a.k.a. the image one sees when playing the game and 
 the possible actions that our agent can perform are *Wait*, *Left*, *Right* and *Rotate*. \
 The rewards are the points you get when playing Tetris, e.g. for completing a row or when the blocks reach the top and 
