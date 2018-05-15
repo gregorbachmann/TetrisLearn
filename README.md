@@ -13,9 +13,10 @@ We first need to introduce some definitions. I will always give an example for t
   * **Agent**:  Our AI that will learn to play the game. 
                
   * **Environment**: The system our agent interacts with. This will simply be the Tetris Game.
-  * **State**:  An instance of the environment that our agent will be able to observe at time t.
+  * **State**:  An instance of the environment that our agent will be able to observe at time t. I will denote it by \\(S_{t}\\)
                 
   * **Action**: Actions that our agent can take in order to change the current state. 
   * **Reward**: The points that our agent gets for changing the current state by performing a certain action. 
+  * **
   
   
