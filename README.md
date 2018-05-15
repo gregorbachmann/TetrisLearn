@@ -46,14 +46,21 @@ The first surprise is that we will treat it as a Regression Problem!
 Imagine the following:
 
 What if we could predict the future reward we get if we choose action $A_{t}$ given that we are in state $S_{t}$?
+
 Namely if we had a function Q(S,A) that maps state and action pairs $(S_{t}, A_{t})$ to future rewards, we could always choose the action
 that maximizes this function and the problem would be solved.
+
 This function is defined on the space of all possible states and actions, which is immensive since the number of possible states is given
 by 3^(20 * 10). (We model our Tetris game as an 20x10 array containing either 1,0,-1)
+
 This makes it impossible to determine Q exactly, that's where our beloved Neural Nets come into play!
+
 We use a Convolutional Neural Network as a function approximator to our so called **Q-Function**, imitating it better and better with every game our agent plays. These very imprecise statements require preciser explanation.
-Usually a Neural Net (or any Machine Learning algorithm stemming from the Supervised Learning Region) requires targets that it needs to approximate. Think of classification problems such as recognizing dogs from pictures or determining the age of a patient based on his brain scan etc, all these problems require training data, where we know what our true targets are. 
+
+Usually a Neural Net (or any Machine Learning algorithm stemming from the Supervised Learning Region) requires targets that it needs to approximate. Think of classification problems such as recognizing dogs from pictures or determining the age of a patient based on his brain scan etc, all these problems require training data, where we know what our true targets are.
+
 A very important observation is that we are not able to provide that to our network:
+
 Imagine we have some state S and choose to perform action A. We are able to observe the immediate reward but in order to calculate the true total reward, we would need to try all the combinations of actions until the terminal time n to find the maximizing sequence that gives us the true total reward. A computational burden that my computer surely cannot stomach (and neither EulerCluster).
 At this moment, you should really be stunned by the difficulty of this problem.
 
