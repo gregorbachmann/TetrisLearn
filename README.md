@@ -26,10 +26,10 @@ We first need to introduce some definitions. I will always give an example for t
 Don't worry about these rather technical definitions, they are all actually very natural to our problem.\
 In the case of Tetris, the agent will be our Convolutional Neural Network. \
 The environment is the game itself with which the agent can interact. It is partly stochastic as we never know what new block will appear at the top when we place the block before on the bottom.\
-The states are given by snapshots of the game, a.k.a. the image one sees when playing the game. \
-The possible actions that our agent can perform are *Wait*, *Left*, *Right* and *Rotate*. \
-The rewards are the points you get when playing Tetris, e.g. for completing a row or when the blocks reach the top. \
-The total future reward is all the rewards we will collect starting from time t until our agent loses. \
+The states are given by snapshots of the game, a.k.a. the image one sees when playing the game and 
+the possible actions that our agent can perform are *Wait*, *Left*, *Right* and *Rotate*. \
+The rewards are the points you get when playing Tetris, e.g. for completing a row or when the blocks reach the top and 
+the total future reward is all the rewards we will collect starting from time t until our agent loses. \
 The discounted version tries to include the uncertainty in future rewards due to the randomness of our game, letting them count less by multiplying them by $\gamma < 1$ \
 The episode is simply one round of Tetris until our agent loses. (GameOver)
 
