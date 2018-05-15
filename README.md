@@ -4,3 +4,10 @@
 # Overview
 
 Our initial goal in this project was to get acquainted with the idea of Reinforcement Learning, ideally via progamming it with a simple example. Inspired as many others by DeepMind and their success with letting Neural Networks play Atari-Games, we decided to choose a similar example. Since we both weren't familiar with importing these games directly, emulators and stuff, we chose a game that is relatively easy to implement, Tetris. Writing the game ourselves allowed us to directly implement all the functions, which made the training process easier (but debugging harder...). We followed the approach of DeepMind, namely using Deep-Q-Learning and directly feeding the raw pixels of our game into the Convolutional Neural Network. I will describe the theory and the architecture used in the next paragraph. As it turns out (so far at least), Tetris was a bad choice (It would have been worth it to check for existing papers before programming the stuff for weeks..). The game structure (obviously) asks for relatively long-term decisions, since you cannot really associate a reward with a decision immediately. Blinded by all the Machine Learning Magic, we thought that it will somehow work, I mean we're using a Convolutional Neural Net, nothing can go wrong, right?
+
+
+# Theory
+
+Let's first get to dry theory. How the hack is it possible to let an agent learn how to play games??
+We first need to introduce some definitions. I will always give an example for these definitions using our implementation of Tetris.
+
