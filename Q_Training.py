@@ -2,6 +2,7 @@ import tensorflow as tf
 from collections import deque
 import numpy as np
 import random
+
 # Define all parameters needed for DeepQNet
 wait = [1, 0, 0, 0]
 left = [0, 1, 0, 0]
@@ -16,7 +17,7 @@ learning_rate = 0.0002  # Choose some learning rate
 training = True
 
 # Training parameters
-total_episodes = 700  # Run 1000 Tetris games to train
+total_episodes = 1  # Run 1000 Tetris games to train
 max_steps = 2000
 batch_size = 64
 
@@ -131,7 +132,7 @@ if training == True:
                     game.translate_right()
                 if action[3] == 1:
                     game.rotate()
-                if step % 2 == 0:
+                if step % 1 == 0:
                     game.gravitate()
 
 
@@ -144,10 +145,10 @@ if training == True:
                     game.project()
                     next_state = game.field.reshape(state_size)
                     step = max_steps
-                    print('Episode: {}'.format(episode),
+                    """print('Episode: {}'.format(episode),
                           'Total reward: {}'.format(total_reward),
-                          'Training loss: {:.4f}'.format(loss),
-                          'Explore P: {:.4f}'.format(explore_probability))
+                          'Tr2aining loss: {:.4f}'.format(loss),
+                          'Explore P: {:.4f}'.format(explore_probability))"""
                     rewards_list.append((episode, total_reward))
                     memory.add((state, action, reward, next_state, done))
 
@@ -182,6 +183,7 @@ if training == True:
                 loss, _ = sess.run([deepqnet1.loss, deepqnet1.optimizer], feed_dict={deepqnet1.inputs_: states,
                                 deepqnet1.target_Q: targets, deepqnet1.actions_: actions})
 
+    saver.save(sess, 'TetrisEuler', global_step=1000)
 
 # Now after training, let the NNet play the game
 
@@ -191,7 +193,7 @@ game_new.reset()
 counter=0
 moves=2
 with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
+    saver.restore(sess, "TetrisEuler")
     while game_new.block!=None:
         for i in range(moves):
             game_new.project()
@@ -224,3 +226,4 @@ with tf.Session() as sess:
         plt.imshow(game_new.field)
         plt.title('Number ' + str(i+counter))
         plt.pause(0.02)
+
